@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Form } from '@unform/web'
 import { Scope } from '@unform/core'
 import './App.css';
@@ -13,15 +13,25 @@ const initialData = {
 }
 
 function App() {
-  function handleSubmit(data) {
+  const formRef = useRef(null);
+
+  function handleSubmit(data, { reset }) {
+    // validation
+    if(data.name === '') {
+      formRef.current.setFieldError('name', 'O nome é obrigatório');
+      return;
+    }
+
     console.log(data);
+
+    reset();
   }
 
   return (
     <div>
       <h1>Hello world</h1>
 
-      <Form initialData={initialData} onSubmit={handleSubmit}>
+      <Form ref={formRef} initialData={initialData} onSubmit={handleSubmit}>
         <Input name="name" />
         <Input type="email" name="email" />
         <Input type="password" name="password" />

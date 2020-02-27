@@ -13,5 +13,11 @@ export default function Input({ name, ...props }) {
     })
   }, [fieldName, registerField]);
 
-  return <input ref={inputRef} defaultValue={defaultValue} {...props} />;
+  return (
+    <div>
+      <input ref={inputRef} defaultValue={defaultValue} {...props} />
+
+      { error && <span style={{ color: '#f00' }}>{error}</span>}
+    </div>
+  )
 }
