@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Form } from '@unform/web'
 import { Scope } from '@unform/core'
 import './App.css';
@@ -6,15 +6,17 @@ import './App.css';
 import Input from './components/Form/input'
 import * as Yup from 'yup'
 
-const initialData = {
-  email: 'ericktrettel@gmail.com',
-  address: {
-    number: 10
-  }
-}
-
 function App() {
   const formRef = useRef(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+        formRef.current.setData({
+          name: 'Erick Trettel',
+          email: 'ericktrettel@gmail.com'
+        })
+    }, 2000);
+  }, []);
 
   async function handleSubmit(data, { reset }) {
     try {
@@ -54,7 +56,7 @@ function App() {
     <div>
       <h1>Hello world</h1>
 
-      <Form ref={formRef} initialData={initialData} onSubmit={handleSubmit}>
+      <Form ref={formRef} onSubmit={handleSubmit}>
         <Input name="name" />
         <Input type="email" name="email" />
         <Input type="password" name="password" />
