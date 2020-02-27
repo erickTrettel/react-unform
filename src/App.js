@@ -4,6 +4,7 @@ import { Scope } from '@unform/core'
 import './App.css';
 
 import Input from './components/Form/input'
+import * as Yup from 'yup'
 
 const initialData = {
   email: 'ericktrettel@gmail.com',
@@ -15,16 +16,38 @@ const initialData = {
 function App() {
   const formRef = useRef(null);
 
-  function handleSubmit(data, { reset }) {
-    // validation
-    if(data.name === '') {
-      formRef.current.setFieldError('name', 'O nome é obrigatório');
-      return;
+  async function handleSubmit(data, { reset }) {
+    try {
+      const schema = Yup.object().shape({
+        name: Yup.string().required('O nome é obrigatório'),
+        email: Yup.string()
+          .email('Digite um e-mail válido')
+          .required('O e-mail é obrigatório'),
+        address: Yup.object().shape({
+          city: Yup.string().min(3, 'No mínimo 3 caracteres').required('A cidade é obrigatória')
+        })
+      });
+  
+      await schema.validate(data, {
+        abortEarly: false
+      })
+
+      console.log(data);
+  
+      reset();
+
+      // clear errors 
+      formRef.current.setErrors({});
+    } catch(e) {
+      if(e instanceof Yup.ValidationError) {
+        const errorMessages = {};
+        e.inner.forEach(error => {
+          errorMessages[error.path] = error.message;
+        })
+
+        formRef.current.setErrors(errorMessages);
+      }
     }
-
-    console.log(data);
-
-    reset();
   }
 
   return (
